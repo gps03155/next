@@ -1,0 +1,5 @@
+// ES15를 구식 브라우저에서도 사용가능하게 해줌
+{
+  "presets": ["next/babel"],
+  "plugins": [["styled-components", { "ssr": true }], "inline-react-svg"]
+}

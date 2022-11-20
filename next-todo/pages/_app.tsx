@@ -1,0 +1,17 @@
+import App, { AppContext, AppProps, AppInitialProps } from "next/app";
+import Header from "../components/Header";
+import GlobalStyle from "../styles/GlobalStyle";
+
+// Component: pages/index
+// pagaProps: getServerSideProps, getInitalProps, getStaticProps
+const app = ({ Component, pageProps }: AppProps) => {
+  return (
+    <>
+      <GlobalStyle />
+      <Header />
+      <Component {...pageProps} />
+    </>
+  );
+};
+
+export default app;
