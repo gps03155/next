@@ -1,7 +1,9 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useState } from "react";
 import styled from "styled-components";
 import palette from "../styles/palette";
 import { ObjectIndexType, TodoType } from "../types/todo";
+import { checkTodoAPI } from "../lib/api/todo";
+import { useRouter } from "next/router";
 
 const Container = styled.div`
   width: 100%;
@@ -71,10 +73,12 @@ interface IProps {
 }
 
 const TodoList: React.FC<IProps> = ({ todos }) => {
+  const [localTodos, setLocalTodos] = useState(todos);
+
   const getTodoColorNums = useCallback(() => {
     const colors: ObjectIndexType = {};
 
-    todos.forEach(({ color }) => {
+    localTodos.forEach(({ color }) => {
       const value = colors[color];
       colors[color] = !value ? 1 : value + 1;
     });
@@ -83,6 +87,26 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
   }, [todos]);
 
   const todoColorNums = useMemo(getTodoColorNums, [todos]);
+
+  const checkTodo = async (id: number) => {
+    try {
+      await checkTodoAPI(id);
+      console.log("checked!!!");
+      // router.reload();
+      // router.push("/");
+
+      const newTodos = localTodos.map((todo) => {
+        if (todo.id === id) {
+          return { ...todo, checked: !todo.checked };
+        }
+        return todo;
+      });
+
+      setLocalTodos(newTodos);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <Container>
@@ -129,7 +153,7 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
                 <button
                   type="button"
                   className="todo-button"
-                  //   onClick={() => {}}
+                  onClick={() => checkTodo(todo.id)}
                 />
               )}
             </div>
