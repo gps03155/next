@@ -17,6 +17,36 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.send("hello Next");
   }
 
+  if (req.method === "POST") {
+    const { text } = req.body;
+
+    if (!text) {
+      res.statusCode = 400;
+      return res.send("text / color not exist");
+    }
+
+    const todos = Data.todo.getList();
+    let todoId: number;
+
+    if (todos.length > 0) {
+      todoId = todos[todos.length - 1].id + 1;
+    } else {
+      todoId = 1;
+    }
+
+    const newTodo = {
+      id: todoId,
+      text,
+      checked: false,
+    };
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    Data.todo.write([...todos, newTodo]);
+    res.statusCode = 200;
+    res.end();
+  }
+
   res.statusCode = 405;
   console.log(res.statusCode);
   return res.end();

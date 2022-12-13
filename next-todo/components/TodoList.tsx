@@ -2,8 +2,7 @@ import React, { useMemo, useCallback, useState } from "react";
 import styled from "styled-components";
 import palette from "../styles/palette";
 import { ObjectIndexType, TodoType } from "../types/todo";
-import { checkTodoAPI } from "../lib/api/todo";
-import { useRouter } from "next/router";
+import { checkTodoAPI, deleteTodoAPI } from "../lib/api/todo";
 
 const Container = styled.div`
   width: 100%;
@@ -108,6 +107,16 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
     }
   };
 
+  const deleteTodo = async (id: number) => {
+    try {
+      await deleteTodoAPI(id);
+      const newTodos = localTodos.filter((todo) => todo.id !== id);
+      setLocalTodos(newTodos);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <Container>
       <div className="todo-list-header">
@@ -141,10 +150,18 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
             <div className="todo-right-side">
               {todo.checked && (
                 <>
-                  <button type="button" className="todo-button">
+                  <button
+                    type="button"
+                    className="todo-button"
+                    onClick={() => deleteTodo(todo.id)}
+                  >
                     삭제
                   </button>
-                  <button type="button" className="todo-button">
+                  <button
+                    type="button"
+                    className="todo-button"
+                    onClick={() => checkTodo(todo.id)}
+                  >
                     해제
                   </button>
                 </>
